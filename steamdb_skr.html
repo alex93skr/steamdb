@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>steam db by skr</title>
+
+<style>
+body {
+	background-color: #0E202D;
+	font-family: "Lucida Grande", Sans-Serif;
+	font-size: 22px;
+	color: white;
+}
+
+A:link,
+A:visited,
+A:active {
+	color: white;
+	text-decoration: none;
+}
+
+A:hover {
+	color: white;
+	text-decoration: underline;
+}
+
+
+.field {
+	vertical-align: top;
+	padding: 10px;
+	border-spacing: 0px;
+	border-collapse: collapse;
+}
+
+.table_sort table {
+	border-spacing: 0px;
+	border-collapse: collapse;
+	background: black;
+
+}
+
+.table_sort th {
+    color: #ffebcd;
+    background: #25567B;
+    cursor: pointer;
+}
+
+.table_sort td,
+.table_sort th {
+	padding: 7px;
+	padding-right: 20px;
+	padding-left: 20px;
+	font-family: "Lucida Grande", Sans-Serif;
+	font-size: 13px;
+}
+
+.table_sort tbody tr:nth-child(odd) {
+	background: #2A3A45
+}
+
+.table_sort tbody tr:nth-child(even) {
+	background: #252D34
+}
+
+
+th.sorted[data-order="1"],
+th.sorted[data-order="-1"] {
+	position: relative;
+}
+
+th.sorted[data-order="1"]::after,
+th.sorted[data-order="-1"]::after {
+    right: 8px;
+    position: absolute;
+}
+
+th.sorted[data-order="-1"]::after {
+	content: "▼"
+}
+
+th.sorted[data-order="1"]::after {
+	content: "▲"
+}
+</style>
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', () => {
+
+    const getSort = ({ target }) => {
+        const order = (target.dataset.order = -(target.dataset.order || -1));
+        const index = [...target.parentNode.cells].indexOf(target);
+        const collator = new Intl.Collator(['en', 'ru'], { numeric: true });
+        const comparator = (index, order) => (a, b) => order * collator.compare(
+            a.children[index].innerHTML,
+            b.children[index].innerHTML
+        );
+        
+        for(const tBody of target.closest('table').tBodies)
+            tBody.append(...[...tBody.rows].sort(comparator(index, order)));
+
+        for(const cell of target.parentNode.cells)
+            cell.classList.toggle('sorted', cell === target);
+    };
+    
+    document.querySelectorAll('.table_sort thead').forEach(tableTH => tableTH.addEventListener('click', () => getSort(event)));
+    
+});
+</script>
+
+</head>
+<body>
+
+<center>
+<h1><a href="/">steam db by skr</a></h1>
+
+
+
+<div>
+
+<form action="" method="get">
+<table class="field" border="0px">
+<tbody>
+<tr>
+
+{# ГОД #}
+
+	<td class="field">
+	<font style="font-size: 12px;">Год</font><br>
+	<select name="years">
+		<option>all</option>
+	{%- for i in appdata['arg']['years'] %}
+		{%- if appdata['request']['years'] == i %}
+		<option selected value="{{ i }}">{{ i }}</option>
+		{%- else %}
+		<option value="{{ i }}">{{ i }}</option>
+		{%- endif %}
+	{%- endfor %}
+    </select>
+	</td>
+	
+{# РЕЙТИНГ #}
+
+	<td class="field">
+	<font style="font-size: 12px;">Рейтинг</font><br>
+	<select name="rating">
+		<option>all</option>
+	{%- for i in appdata['arg']['rating'] %}
+		{%- if appdata['request']['rating'] == i %}
+		<option selected value="{{ i }}">&gt; {{ i }}</option>
+		{%- else %}
+		<option value="{{ i }}">&gt; {{ i }}</option>
+		{%- endif %}
+	{%- endfor %}
+    </select>
+	</td>
+
+{# Отзывы #}
+
+	<td class="field">
+	<font style="font-size: 12px;">Отзывы</font><br>
+	<select name="votes">
+		<option>all</option>
+	{%- for i in appdata['arg']['votes'] %}
+		{%- if appdata['request']['votes'] == i %}
+		<option selected value="{{ i }}">&gt; {{ i }}</option>
+		{%- else %}
+		<option value="{{ i }}">&gt; {{ i }}</option>
+		{%- endif %}
+	{%- endfor %}
+    </select>
+	</td>
+
+{# USERTAGS_LIST #}
+
+	<td class="field">
+	<font style="font-size: 12px;">Теги</font><br>
+	<select name="tag" size="10" multiple="multiple">
+	{%- for tag in appdata['arg']['tag'] %}
+		{%- if tag[0] in appdata['request']['tag'] %}
+		<option selected value="{{ tag[0] }}">{{ tag[0] }} [{{ tag[1] }}]</option>
+		{%- else %}
+		<option value="{{ tag[0] }}">{{ tag[0] }} [{{ tag[1] }}]</option>
+		{%- endif %}
+	{%- endfor %}
+    </select>
+	</td>
+	
+{# ЧЕК КАРТИНКА #}
+
+	<td class="field">
+	<input name="logo" type="checkbox" checked><font style="font-size: 12px;">Рисовать логотип</font>
+	<p align="center">
+	<input type="button" onclick="location.href='/'"  value ="Очистить" /><br><br>
+	<input type="submit" value="Поехали">
+	</td>
+</tr>
+</tbody>
+</table>
+</form>
+
+</div>
+
+{%- if appdata['result'] != [] %}
+<div>
+
+<p align="center" style="font-size: 12px;">
+[*] выбрать несколько тегов сtrl/shift + клик<br>
+[*] клик по заголовку сортирует колонку<br>
+
+<table class="table_sort">
+
+{# ТАБЛИЦА РЕЗУЛЬТАТ #}
+
+<thead>
+	<tr>
+	<th>id</th>
+		{%- if appdata['request']['logo'] == 'on' %}
+		<th>pic</th>
+		{%- endif %}
+	<th>name</th>
+	<th style="text-align: right;">rating</th>
+	<th style="text-align: right;">votes</th>
+	<th style="text-align: right;">metacritic</th>
+	</tr>
+</thead>
+
+<tbody>
+	{%- for id in appdata['result'] %}
+	<tr>
+	<td>{{ id }}</td>
+		{%- if appdata['request']['logo'] == 'on' %}
+		<td><img src="https://steamcdn-a.akamaihd.net/steam/apps/{{ id }}/capsule_sm_120.jpg"></td>
+		{%- endif %}
+	<td><a href="https://store.steampowered.com/app/{{ id }}/" target="_blank">{{ steamdb[id]['name'][:30] }}</a></td>
+	<td style="text-align: right;">{{ steamdb[id]['rating'] }}</td>
+	<td style="text-align: right;">{{ steamdb[id]['positive'] + steamdb[id]['negative'] }}</td>
+	<td style="text-align: center;">{{ steamdb[id]['metacritic_score'] }}</td>
+	</tr>
+	{%- endfor %}
+</tbody>
+
+</table>
+</div>
+{%- else %}
+<p align="center" style="font-size: 12px;">[*] выбрать минимум один параметр для поиска
+{%- endif %}
+
+
+<p><p><p>
+
+
+
+</center>
+
+</body>
+</html>
