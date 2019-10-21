@@ -155,7 +155,7 @@ def index():
 
     searcher()
 
-    return render_template('steamdb_skr.html', steamdb=steamdb, appdata=appdata)
+    return render_template('steamdb_skr.html', steamdb=steamdb, appdata=appdata, len=len(appdata['result']))
 
 
 #############################################################
