@@ -23,6 +23,19 @@ def load_pickle(url):
         return pickle.load(read_file)
 
 
+def timer(func):
+    import time
+
+    def wrapper():
+        start = time.perf_counter_ns()
+        func()
+        end = time.perf_counter_ns()
+        # print((end - start) / 1000000000)
+        appdata['tech'].update({'timer': (end - start) / 1000000000})
+
+    return wrapper
+
+
 def key_arr_stat(inkey, outkey):
     alltags = {}
 
@@ -82,7 +95,7 @@ def data_preparation():
     # key_stat('operatingSystem')
     # key_stat('publisher')
 
-
+@timer
 def searcher():
     def check(key):
         if key == 'logo':
@@ -135,6 +148,7 @@ def searcher():
 def index():
     appdata['request'] = {}
     appdata['result'] = []
+    appdata['tech'] = {}
 
     for key, val in request.args.lists():
         if key in appdata['arg'] and val[0] in appdata['arg'][key]:
@@ -155,7 +169,9 @@ def index():
 
     searcher()
 
-    return render_template('steamdb_skr.html', steamdb=steamdb, appdata=appdata, len=len(appdata['result']))
+    appdata['tech'].update({'len': len(appdata['result'])})
+
+    return render_template('steamdb_skr.html', steamdb=steamdb, appdata = appdata)
 
 
 #############################################################
@@ -173,6 +189,7 @@ if __name__ == "__main__":
         },
         'tag_dict': {},
         'request': {},
+        'tech': {},
         'result': []
     }
 

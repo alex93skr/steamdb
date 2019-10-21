@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
 [*] клик по заголовку сортирует колонку<br>
 
 
-<p>Всего найдено: {{ len }}
+<p>Всего найдено: {{ appdata['tech']['len'] }}
 
 
 <table class="table_sort">
@@ -244,6 +244,9 @@ document.addEventListener('DOMContentLoaded', () => {
 </tbody>
 
 </table>
+
+<p>Сформировано за: {{ appdata['tech']['timer'] }} сек.
+
 </div>
 {%- else %}
 <p align="center" style="font-size: 12px;">[*] выбрать минимум один параметр для поиска
