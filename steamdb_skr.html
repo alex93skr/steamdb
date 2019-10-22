@@ -123,7 +123,7 @@ $(document).ready(function(){
     $('.searchAC').on('change paste keyup', function() {
       if($(this).val().length>0){
       $(".tagList label").hide();
-      $(".tagList label[data-title*="+$(this).val()+"]").show();
+      $(".tagList label[data-title*="+$(this).val().toLowerCase()+"]").show();
     }
     else{$(".tagList label").show();}
   });
@@ -219,8 +219,6 @@ $(document).ready(function(){
 
 {# EXCEPTION USERTAGS LIST #}
 
-
-{# USERTAGS_LIST #}
 
 	<td class="field">
 	<font style="font-size: 12px;">Исключить теги</font><br>
