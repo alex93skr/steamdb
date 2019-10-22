@@ -12,6 +12,11 @@ body {
 	color: white;
 }
 
+.searchAC{width:200px;}
+.tagList{width:200px;height:150px;overflow-y:auto;font-size: 13px;}
+.tagList label{display:block;}
+
+
 A:link,
 A:visited,
 A:active {
@@ -83,6 +88,9 @@ th.sorted[data-order="1"]::after {
 }
 </style>
 
+
+
+
 <script type="text/javascript">
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -107,13 +115,33 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<script ENGINE="text/javascript" src="https://code.jquery.com/jquery-3.4.1.js "></script>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $('.searchAC').on('change paste keyup', function() {
+      if($(this).val().length>0){
+      $(".tagList label").hide();
+      $(".tagList label[data-title*="+$(this).val()+"]").show();
+    }
+    else{$(".tagList label").show();}
+  });
+});
+
+</script>
+
+
 </head>
 <body>
+
+
+
 
 <center>
 <h1><a href="/">steam db by skr</a></h1>
 
-
+<hr>
 
 <div>
 
@@ -174,31 +202,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	<td class="field">
 	<font style="font-size: 12px;">Теги</font><br>
-	<select name="tag" size="10" multiple="multiple">
+	<div class='searchTag'>
+	<input class='searchAC' type='text' placeholder='Быстрый фильтр тегов...'>
+	<div class='tagList'>
 	{%- for tag in appdata['arg']['tag'] %}
 		{%- if tag[0] in appdata['request']['tag'] %}
-		<option selected value="{{ tag[0] }}">{{ tag[0] }} [{{ tag[1] }}]</option>
+		<label data-title='{{ tag[0].lower() }}'><input name="tag" type='checkbox' value='{{ tag[0] }}' checked>{{ tag[0] }} [{{ tag[1] }}]</label>
 		{%- else %}
-		<option value="{{ tag[0] }}">{{ tag[0] }} [{{ tag[1] }}]</option>
+		<label data-title='{{ tag[0].lower() }}'><input name="tag" type='checkbox' value='{{ tag[0] }}'>{{ tag[0] }} [{{ tag[1] }}]</label>
 		{%- endif %}
 	{%- endfor %}
-    </select>
+	</div>
+	</div>
 	</td>
+
 
 {# EXCEPTION USERTAGS LIST #}
 
+
+{# USERTAGS_LIST #}
+
 	<td class="field">
 	<font style="font-size: 12px;">Исключить теги</font><br>
-	<select name="extag" size="10" multiple="multiple">
+	<div class='searchTag'>
+	<input class='searchAC' type='text' placeholder='Быстрый фильтр тегов...'>
+	<div class='tagList'>
 	{%- for tag in appdata['arg']['tag'] %}
 		{%- if tag[0] in appdata['request']['extag'] %}
-		<option selected value="{{ tag[0] }}">{{ tag[0] }} [{{ tag[1] }}]</option>
+		<label data-title='{{ tag[0].lower() }}'><input name="extag" type='checkbox' value='{{ tag[0] }}' checked>{{ tag[0] }} [{{ tag[1] }}]</label>
 		{%- else %}
-		<option value="{{ tag[0] }}">{{ tag[0] }} [{{ tag[1] }}]</option>
+		<label data-title='{{ tag[0].lower() }}'><input name="extag" type='checkbox' value='{{ tag[0] }}'>{{ tag[0] }} [{{ tag[1] }}]</label>
 		{%- endif %}
 	{%- endfor %}
-    </select>
+	</div>
+	</div>
 	</td>
+
 
 {# ЧЕК КАРТИНКА #}
 
@@ -220,9 +259,11 @@ document.addEventListener('DOMContentLoaded', () => {
 <div>
 
 <p align="center" style="font-size: 12px;">
-[*] выбрать несколько тегов сtrl/shift + клик<br><br>
-
+[*] все теги по алфавиту тут - <a href="https://pastebin.com/H7kA8n8c" target="_blank">https://pastebin.com/H7kA8n8c</a>
+<br><br>
 Аргументы поиска: {{ appdata['request'] }}<br>
+
+<hr>
 
 <p>Всего найдено игр: {{ appdata['tech']['len'] }}
 
@@ -267,15 +308,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </div>
 {%- else %}
-<p align="center" style="font-size: 12px;">[*] выбрать минимум один параметр для поиска<br>
-[*] выбрать несколько тегов сtrl/shift + клик<br>
+
+
+
+
+<p align="center" style="font-size: 12px;">
+[*] все теги по алфавиту тут - <a href="https://pastebin.com/H7kA8n8c" target="_blank">https://pastebin.com/H7kA8n8c</a><br>
+
+<hr>
+
 {%- endif %}
 
 
 <p><p><p>
 
 <p align="center" style="font-size: 12px;">
-[*] баги, репорты, плюсы завозить на <a href="https://pikabu.ru/story/poiskovik_po_baze_igr_steam_7001695" target="_blank"><img src="https://github.com/alex93skr/steamdb/blob/master/pikabulogo.gif?raw=true" align="middle"></a><br>
+[*] баги, репорты, плюсы завозить в пост на <a href="https://pikabu.ru/story/poiskovik_po_baze_igr_steam_7001695" target="_blank"><img src="https://github.com/alex93skr/steamdb/blob/master/pikabulogo.gif?raw=true" align="middle"></a><br>
 
 </center>
 
