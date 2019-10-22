@@ -126,10 +126,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	<td class="field">
 	<font style="font-size: 12px;">Год</font><br>
-	<select name="years">
+	<select name="years" size="6" multiple="multiple">
 		<option>all</option>
 	{%- for i in appdata['arg']['years'] %}
-		{%- if appdata['request']['years'] == i %}
+		{%- if i in appdata['request']['years'] %}
 		<option selected value="{{ i }}">{{ i }}</option>
 		{%- else %}
 		<option value="{{ i }}">{{ i }}</option>
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	<td class="field">
 	<font style="font-size: 12px;">Рейтинг</font><br>
-	<select name="rating">
+	<select name="rating" size="6">
 		<option>all</option>
 	{%- for i in appdata['arg']['rating'] %}
 		{%- if appdata['request']['rating'] == i %}
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	<td class="field">
 	<font style="font-size: 12px;">Отзывы</font><br>
-	<select name="votes">
+	<select name="votes" size="6">
 		<option>all</option>
 	{%- for i in appdata['arg']['votes'] %}
 		{%- if appdata['request']['votes'] == i %}
@@ -184,10 +184,26 @@ document.addEventListener('DOMContentLoaded', () => {
 	{%- endfor %}
     </select>
 	</td>
-	
+
+{# EXCEPTION USERTAGS LIST #}
+
+	<td class="field">
+	<font style="font-size: 12px;">Исключить теги</font><br>
+	<select name="extag" size="10" multiple="multiple">
+	{%- for tag in appdata['arg']['tag'] %}
+		{%- if tag[0] in appdata['request']['extag'] %}
+		<option selected value="{{ tag[0] }}">{{ tag[0] }} [{{ tag[1] }}]</option>
+		{%- else %}
+		<option value="{{ tag[0] }}">{{ tag[0] }} [{{ tag[1] }}]</option>
+		{%- endif %}
+	{%- endfor %}
+    </select>
+	</td>
+
 {# ЧЕК КАРТИНКА #}
 
 	<td class="field">
+	<p>
 	<input name="logo" type="checkbox" checked><font style="font-size: 12px;">Рисовать логотип</font>
 	<p align="center">
 	<input type="button" onclick="location.href='/'"  value ="Очистить" /><br><br>
@@ -204,12 +220,14 @@ document.addEventListener('DOMContentLoaded', () => {
 <div>
 
 <p align="center" style="font-size: 12px;">
-[*] выбрать несколько тегов сtrl/shift + клик<br>
+[*] выбрать несколько тегов сtrl/shift + клик<br><br>
+
+Аргументы поиска: {{ appdata['request'] }}<br>
+
+<p>Всего найдено игр: {{ appdata['tech']['len'] }}
+
+<p align="center" style="font-size: 12px;">
 [*] клик по заголовку сортирует колонку<br>
-
-
-<p>Всего найдено: {{ appdata['tech']['len'] }}
-
 
 <table class="table_sort">
 
@@ -249,7 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </div>
 {%- else %}
-<p align="center" style="font-size: 12px;">[*] выбрать минимум один параметр для поиска
+<p align="center" style="font-size: 12px;">[*] выбрать минимум один параметр для поиска<br>
+[*] выбрать несколько тегов сtrl/shift + клик<br>
 {%- endif %}
 
 

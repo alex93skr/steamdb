@@ -95,6 +95,7 @@ def data_preparation():
     # key_stat('operatingSystem')
     # key_stat('publisher')
 
+
 @timer
 def searcher():
     def check(key):
@@ -102,7 +103,7 @@ def searcher():
             return True
         elif key == 'years':
             datePublished = steamdb[id].get('datePublished')
-            if (datePublished is not None) and (appdata['request'][key] in datePublished):
+            if (datePublished is not None) and (any(year in datePublished for year in appdata['request'][key])):
                 return True
         elif key == 'rating':
             rating = steamdb[id].get('rating')
@@ -117,6 +118,10 @@ def searcher():
         elif key == 'tag':
             userTags = steamdb[id].get('userTags')
             if all(tag in userTags for tag in appdata['request']['tag']):
+                return True
+        elif key == 'extag':
+            userTags = steamdb[id].get('userTags')
+            if all(tag not in userTags for tag in appdata['request']['extag']):
                 return True
 
         return False
@@ -151,14 +156,29 @@ def index():
     appdata['tech'] = {}
 
     for key, val in request.args.lists():
-        if key in appdata['arg'] and val[0] in appdata['arg'][key]:
-            appdata['request'][key] = val[0]
+        if key == 'years':
+            for i in val:
+                if i in appdata['arg']['years']:
+                    if appdata['request'].get('years') == None:
+                        appdata['request'].update({'years': []})
+                    appdata['request']['years'].append(i)
+            continue
         if key == 'tag':
             for i in val:
                 if i in appdata['tag_dict']:
                     if appdata['request'].get('tag') == None:
                         appdata['request'].update({'tag': []})
                     appdata['request']['tag'].append(i)
+            continue
+        if key == 'extag':
+            for i in val:
+                if i in appdata['tag_dict']:
+                    if appdata['request'].get('extag') == None:
+                        appdata['request'].update({'extag': []})
+                    appdata['request']['extag'].append(i)
+            continue
+        if key in appdata['arg'] and val[0] in appdata['arg'][key]:
+            appdata['request'][key] = val[0]
 
     pprint(appdata['request'])
 
