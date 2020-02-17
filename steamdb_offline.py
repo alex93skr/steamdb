@@ -175,7 +175,7 @@ class Analyst:
                 # print(datePublished)
 
                 url = f'<a href="https://store.steampowered.com/app/{id}' \
-                    f'/" target="_blank">{steamdb[id]["name"][:40]}</a>'
+                      f'/" target="_blank">{steamdb[id]["name"][:40]}</a>'
 
                 arr.append([
                     id,
@@ -333,6 +333,90 @@ def finder():
     # print(tabulate(arr))
 
 
+def range_of_ratings():
+    def rounding(n):
+        if 0 <= n < 10: return 0
+        if 10 <= n < 20: return 1
+        if 20 <= n < 30: return 2
+        if 30 <= n < 40: return 3
+        if 40 <= n < 50: return 4
+        if 50 <= n < 60: return 5
+        if 60 <= n < 70: return 6
+        if 70 <= n < 80: return 7
+        if 80 <= n < 90: return 8
+        if 90 <= n < 100: return 9
+
+    arr = {}
+    for id in steamdb:
+
+        datePublished = steamdb[id].get('datePublished')
+        rating = steamdb[id].get('rating')
+        negative = steamdb[id].get('negative', 0)
+        positive = steamdb[id].get('positive', 0)
+        if (rating is not None) and (negative + positive > 100) and ('Multiplayer' in steamdb[id]['userTags']):
+            # if (rating is not None) and (negative + positive > 100):
+            # if (rating is not None) and (datePublished is not None) \
+            #             and (datePublished[0:4] == '2019') and (negative + positive < 10):
+            # if (rating is not None):
+            # rounding_rating = rounding(rating)
+            rounding_rating = round(rating)
+            if rounding_rating not in arr:
+                arr.update({rounding_rating: 1})
+            else:
+                arr[rounding_rating] += 1
+    # pprint(arr)
+    print(arr)
+    print('total:', sum(arr.values()))
+
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker as ticker
+
+    # fig, axs = plt.subplots(2, 1)
+    # gr = axs[0].bar(arr.keys(), arr.values())
+    # gr2 = axs[1].bar(arr2.keys(), arr2.values())
+
+    fig, ax = plt.subplots()
+
+    gr = plt.bar(arr.keys(), arr.values())
+
+    def autolabel(rects):
+        """Attach a text label above each bar in *rects*, displaying its height."""
+        for rect in rects:
+            height = rect.get_height()
+            # print(rect, height)
+            plt.annotate('{}'.format(height),
+                         xy=(rect.get_x() + rect.get_width() / 2, height),
+                         xytext=(0, 0),  # 3 points vertical offset
+                         textcoords="offset points",
+                         ha='center', va='bottom')
+
+    # plt.xlabel('value')
+    # plt.ylabel('date')
+
+    ax.xaxis.set_major_locator(ticker.MultipleLocator(5))
+    ax.xaxis.set_minor_locator(ticker.MultipleLocator(1))
+
+    autolabel(gr)
+
+    plt.grid(True, linestyle='--', which='major',
+             color='grey', alpha=.25)
+
+    # plt.suptitle('Categorical Plotting')
+    plt.show()
+
+
+def avr_tags_ratings():
+
+    arr = {}
+    for id in steamdb:
+
+        # datePublished = steamdb[id].get('datePublished')
+        rating = steamdb[id].get('rating')
+        negative = steamdb[id].get('negative', 0)
+        positive = steamdb[id].get('positive', 0)
+        if (rating is not None) and (negative + positive > 10):
+            rounding_rating = round(rating)
+
 def main():
     # pprint(steamdb)
 
@@ -340,13 +424,17 @@ def main():
 
     # key_arr_stat('categories')
     # key_arr_stat('userTags')
-    # key_stat('publisher')
+    # key_stat('operatingSystem')
     # metacritic_score()
     # stat_by_datePublished()
 
     # sort_by_years()
 
-    finder()
+    # finder()
+
+    range_of_ratings()
+
+    # avr_tags_ratings()
 
     # запуск
     # Analyst()
