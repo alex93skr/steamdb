@@ -113,7 +113,7 @@ def searcher():
             positive = steamdb[id].get('positive')
             negative = steamdb[id].get('negative')
             if (positive is not None) and (negative is not None) and (
-                    positive + negative >= int(appdata['request']['votes'])):
+                    int(positive) + int(negative) >= int(appdata['request']['votes'])):
                 return True
         elif key == 'tag':
             userTags = steamdb[id].get('userTags')
@@ -128,8 +128,8 @@ def searcher():
 
     # need_to_check = []
     #
-    # for key in appdata['request']:
-    #     if (appdata['request'][key] is not None):
+    # for key in imdb_appdata['request']:
+    #     if (imdb_appdata['request'][key] is not None):
     #         need_to_check.append(key)
 
     if appdata['request'] == {}: return
@@ -141,9 +141,9 @@ def searcher():
             appdata['result'].append(id)
 
     # print('searcher')
-    # pprint(appdata['request'])
-    # print(len(appdata['result']))
-    # pprint(appdata['result'])
+    # pprint(imdb_appdata['request'])
+    # print(len(imdb_appdata['result']))
+    # pprint(imdb_appdata['result'])
 
 
 #############################################################
@@ -215,7 +215,7 @@ if __name__ == "__main__":
 
     data_preparation()
 
-    # pprint(appdata)
+    # pprint(imdb_appdata)
 
     if "HEROKU" in list(os.environ.keys()):
         app.run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
