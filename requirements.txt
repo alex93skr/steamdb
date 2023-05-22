@@ -1,5 +1,5 @@
 matplotlib==3.1.1
-requests==2.22.0
+requests==2.31.0
 Flask==1.0.3
 fake_headers==1.0.2
 tabulate==0.8.3
